@@ -18,7 +18,7 @@ The accompanying manual provides additional guidance on using the software. See 
 ## Key Features
 
 - Automated retrieval and local caching of spherical harmonic coefficient files (`.gfc`) from ICGEM.
-- GRACE and GRACE-FO gravity field solutions with a maximum available degree and order of 96.
+- Support for compatible filtered and unfiltered GRACE/GRACE-FO gravity field solutions, with configurable harmonic truncation and 96 × 96 products as the default example.
 - Point-based spherical harmonic synthesis at user-defined geographic coordinates.
 - Mean-removed gravity time series in microgals (µGal).
 - Polynomial regression, Fourier harmonic fitting and moving-average smoothing.
@@ -27,16 +27,29 @@ The accompanying manual provides additional guidance on using the software. See 
 - CSV export and optional PNG plots.
 - Configurable download timeouts, retries and request pacing.
 
-## Data Sources
+## Data Sources and Model Flexibility
 
-The software retrieves the following unfiltered 96 × 96 products through [ICGEM](https://icgem.gfz-potsdam.de/):
+The software retrieves spherical harmonic gravity field solutions from the [International Centre for Global Earth Models (ICGEM)](https://icgem.gfz-potsdam.de/). The following unfiltered 96 × 96 products are provided as the default configuration for demonstration and exploratory analysis:
 
-| Mission | Processing center | Release | Degree/order |
-| --- | --- | --- | --- |
-| GRACE | GFZ | RL06 | 96 |
-| GRACE-FO | CSR | RL06.3 | 96 |
+| Mission | Processing Center | Release | Maximum Degree/Order | Filtering |
+| --- | --- | --- | --- | --- |
+| GRACE | GFZ | RL06 | 96 | Unfiltered |
+| GRACE-FO | CSR | RL06.3 | 96 | Unfiltered |
 
-The source fields are unfiltered; the resulting time series is mean-centered, and optional temporal models are applied for exploratory analysis. Internet access is required to retrieve uncached data.
+**The software is not restricted to the above datasets or to a specific spherical harmonic degree and order.** Users may select alternative compatible gravity field solutions according to their research objectives, including:
+
+- Spherical harmonic solutions with different maximum degrees and orders (e.g., 60, 90, 96, or higher, where available).
+- Filtered and unfiltered gravity field products.
+- Gravity field solutions from different processing centers, such as GFZ, CSR, and JPL.
+- Alternative processing releases and compatible temporal gravity field models available through ICGEM.
+
+To use alternative datasets, modify the corresponding data source URLs in [`grav_anom/core.py`](grav_anom/core.py) and adjust the `nmax` parameter in [`config.ini`](config.ini) to the desired truncation degree, not exceeding the available maximum degree of the selected solution.
+
+Alternative datasets must be compatible with the supported ICGEM spherical harmonic coefficient format (`.gfc`), directory layout, and file naming conventions. Additional code adaptations may be required for products that differ from these conventions. Users should also consider the consistency of normalization conventions, reference systems, temporal coverage, filtering strategies, and background corrections when combining products from different processing centers or releases.
+
+The resulting gravity anomaly time series is mean-centered, and optional temporal models are applied for exploratory analysis. Internet access is required to retrieve uncached data.
+
+For detailed configuration and implementation instructions, refer to the [User Manual (PDF)](MANUAL.pdf).
 
 ## Processing Workflow
 
